@@ -30,7 +30,7 @@
 #define     KEY_DOWN    VK_DOWN
 #define     KEY_ESC     VK_ESCAPE
 #include<iostream>
-#include"console.h"
+
 #include<conio.h>
 #include<windows.h>
 #include<stdlib.h>
@@ -43,34 +43,17 @@ struct toa_do{
 		
 };
 
-
-toa_do food;
-
-
 struct snake{
 	int n;
 	toa_do than[200];
 	TRANGTHAI tt;
 };
 
+struct food{
+	toa_do food;
+};
 
-bool endGame;
-int board1=50,board2=20;
-int n;
-
-void kiem_tra(snake snake){
-	for(int i=0;i<snake.n;i++){
-		
-    	if (snake.than[0].x == snake.than[i].x && snake.than[0].y == snake.than[i].y) endGame = true;
-	}
-	
-    if (snake.than[0].x >= board1) endGame=true;
-    if (snake.than[0].x < 0) endGame=true;
-    if (snake.than[0].y >= board2) endGame=true;
-    if (snake.than[0].y < 0) endGame=true;
-    
-
-}
+int board1,board2;
 
 void gotoXY(int x, int y)
 {
@@ -81,27 +64,16 @@ void gotoXY(int x, int y)
   SetConsoleCursorPosition(h,c);
 }
 
-void ve_snake(snake snake){
-	for(int i=0;i<snake.n;i++){
-		gotoXY(snake.than[i].x,snake.than[i].y);
-		cout<< "+";
-	}
+bool checkKey(int key)
+{
+    return GetAsyncKeyState(key);
 }
 
-void di_chuyen(snake &snake){
-	for(int i=snake.n;i>0;i--){
-		snake.than[i].x=snake.than[i-1].x;
-		snake.than[i].y=snake.than[i-1].y;
-	}
-}
+ 
 
-void thuc_an(){
-	gotoXY(food.x,food.y);
-	cout << "$";
-}
-
-int main(){
-	snake snake;
+void begin(snake &snake,food &food)
+{
+	board1 = 80 ; board2 = 25;
 	snake.n = 3;
 	snake.than[0].x=2;
 	snake.than[0].y=2;
@@ -110,11 +82,45 @@ int main(){
 	snake.than[0].x=4;
 	snake.than[0].y=2;
 	snake.tt=RIGHT;
-	food.x=6;food.y=6;
+	food.food.x=6;food.food.y=6;
+}
+void print_snake(snake snake,food food){
+	gotoXY(food.food.x,food.food.y);
+	cout << "$";
+	for(int i=0;i<snake.n;i++){
+		gotoXY(snake.than[i].x,snake.than[i].y);
+		cout<< "+";
+	}
+}
+
+void di_chuyen(snake &snake){
+	
+	for(int i=snake.n;i>0;i--){
+		snake.than[i].x=snake.than[i-1].x;
+		snake.than[i].y=snake.than[i-1].y;
+	}
+}
+
+void Xu_ly(snake &snake,food &food)
+{
+	if(snake.than[0].x == food.food.x && snake.than[0].y == food.food.y)
+	{
+		snake.n++;
+		food.food.x = rand() % board1;
+		food.food.y = rand() % board2;
+	}
+	
+}
+
+int main(){
+	srand(time(NULL));
+	snake snake;
+	food food;
+	begin(snake,food);
 	start:
 		{
 			system("cls");
-			ve_snake(snake);
+			print_snake(snake,food);
 			
 			if(_kbhit())
 			{
@@ -148,8 +154,8 @@ int main(){
 							return 0;
 						}
 				}
-			di_chuyen(snake);kiem_tra(snake);
-			thuc_an();
+			di_chuyen(snake);
+			
 			switch(snake.tt)
 			{
 				case UP: snake.than[0].y--;break;
@@ -157,9 +163,20 @@ int main(){
 				case RIGHT: snake.than[0].x++;break;
 				case LEFT: snake.than[0].x--;break;
 			}
+			Xu_ly(snake,food);
+			for(int i=snake.n ; i>0 ; i--)
+			{
+				if(snake.than[0].x == snake.than[i].x && snake.than[0].y == snake.than[i].y)
+				{
+					return 0;
+				}
+			}
+			if(snake.than[0].x >= board1 ) return 0;
+			if(snake.than[0].x < 0 ) return 0;
+			if(snake.than[0].y >= board2 ) return 0;
+			if(snake.than[0].y < 0 ) return 0;
 			Sleep(100);
 			goto start;
 		}
 		
 		}
-	
