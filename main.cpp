@@ -30,12 +30,14 @@
 #define     KEY_DOWN    VK_DOWN
 #define     KEY_ESC     VK_ESCAPE
 #include<iostream>
-
+#include"console.h"
 #include<conio.h>
 #include<windows.h>
 #include<stdlib.h>
 #include<time.h>
 using namespace std;
+#define board1 80
+#define board2 25
 enum TRANGTHAI{UP,DOWN,RIGHT,LEFT,STOP};
 
 struct toa_do{
@@ -49,11 +51,11 @@ struct snake{
 	TRANGTHAI tt;
 };
 
-struct food{
+struct food
+{
 	toa_do food;
 };
 
-int board1,board2;
 
 void gotoXY(int x, int y)
 {
@@ -64,41 +66,73 @@ void gotoXY(int x, int y)
   SetConsoleCursorPosition(h,c);
 }
 
-bool checkKey(int key)
-{
-    return GetAsyncKeyState(key);
-}
-
- 
-
 void begin(snake &snake,food &food)
 {
-	board1 = 80 ; board2 = 25;
 	snake.n = 3;
-	snake.than[0].x=2;
-	snake.than[0].y=2;
-	snake.than[0].x=3;
-	snake.than[0].y=2;
+	snake.than[2].x=2;
+	snake.than[2].y=2;
+	snake.than[1].x=3;
+	snake.than[1].y=2;
 	snake.than[0].x=4;
 	snake.than[0].y=2;
 	snake.tt=RIGHT;
-	food.food.x=6;food.food.y=6;
+	
+	food.food.x = 5;
+	food.food.y=5;
 }
-void print_snake(snake snake,food food){
+
+void print_snake(snake snake,food food)
+{
+	system("cls");
+	
 	gotoXY(food.food.x,food.food.y);
-	cout << "$";
-	for(int i=0;i<snake.n;i++){
+	cout <<"$";
+	for(int i=0;i<snake.n;i++)
+	{
 		gotoXY(snake.than[i].x,snake.than[i].y);
 		cout<< "+";
 	}
 }
 
-void di_chuyen(snake &snake){
-	
-	for(int i=snake.n;i>0;i--){
+void control_moveSnake(snake &snake)
+{
+	for(int i=snake.n;i>0;i--)
+	{
 		snake.than[i].x=snake.than[i-1].x;
 		snake.than[i].y=snake.than[i-1].y;
 	}
+	
+	if(_kbhit())
+	{
+		if(checkKey(KEY_UP))
+		{
+			if(snake.tt!=DOWN)
+				snake.tt = UP;
+		}
+		if(checkKey(KEY_DOWN))
+		{
+			if(snake.tt!=UP)
+				snake.tt = DOWN;
+		}
+		if(checkKey(KEY_LEFT))
+		{
+			if(snake.tt!=RIGHT)
+				snake.tt=LEFT;
+		}
+		if(checkKey(KEY_RIGHT))
+		{
+			if(snake.tt!=LEFT)
+				snake.tt=RIGHT;
+		}
+		
+	}
+	switch(snake.tt)
+	{
+		case UP: snake.than[0].y--;break;
+		case DOWN: snake.than[0].y++;break;
+		case RIGHT: snake.than[0].x++;break;
+		case LEFT: snake.than[0].x--;break;
+	}		
 }
 
 void Xu_ly(snake &snake,food &food)
@@ -106,77 +140,62 @@ void Xu_ly(snake &snake,food &food)
 	if(snake.than[0].x == food.food.x && snake.than[0].y == food.food.y)
 	{
 		snake.n++;
-		food.food.x = rand() % board1;
-		food.food.y = rand() % board2;
+		for(int i=snake.n;i>0;i--)
+		{
+			snake.than[i] = snake.than[i-1];
+			food.food.x = rand() % board1;
+			food.food.y = rand() % board2;
+		}
 	}
-	
 }
 
-int main(){
+int main()
+{
 	srand(time(NULL));
 	snake snake;
 	food food;
 	begin(snake,food);
-	start:
+	
+	while(1)
+	{
+		print_snake(snake,food);
+		control_moveSnake(snake);
+		Xu_ly(snake,food);
+		if(checkKey(KEY_ESC))
 		{
-			system("cls");
-			print_snake(snake,food);
-			
-			if(_kbhit())
-			{
-				
-				if(checkKey(KEY_UP))
-						{
-							if(snake.tt!=DOWN)
-								snake.tt = UP;
-							
-						}
-				if(checkKey(KEY_DOWN))
-						{
-							if(snake.tt!=UP)
-								snake.tt = DOWN;
-							
-						}
-				if(checkKey(KEY_LEFT))
-						{
-							if(snake.tt!=RIGHT)
-								snake.tt=LEFT;
-							
-						}
-				if(checkKey(KEY_RIGHT))
-						{
-							if(snake.tt!=LEFT)
-								snake.tt=RIGHT;
-							
-						}
-				if(checkKey(KEY_ESC))
-						{
-							return 0;
-						}
-				}
-			di_chuyen(snake);
-			
-			switch(snake.tt)
-			{
-				case UP: snake.than[0].y--;break;
-				case DOWN: snake.than[0].y++;break;
-				case RIGHT: snake.than[0].x++;break;
-				case LEFT: snake.than[0].x--;break;
-			}
-			Xu_ly(snake,food);
-			for(int i=snake.n ; i>0 ; i--)
-			{
-				if(snake.than[0].x == snake.than[i].x && snake.than[0].y == snake.than[i].y)
-				{
-					return 0;
-				}
-			}
-			if(snake.than[0].x >= board1 ) return 0;
-			if(snake.than[0].x < 0 ) return 0;
-			if(snake.than[0].y >= board2 ) return 0;
-			if(snake.than[0].y < 0 ) return 0;
-			Sleep(100);
-			goto start;
+			cout<<"Game Over";
+			return 0;
 		}
+		for(int i=2; i<snake.n  ;i++)
+		{
+			if(snake.than[0].x == snake.than[i].x && snake.than[0].y == snake.than[i].y )
+			{
+				cout<< "Game Over";
+				return 0;
+			}
+		}
+		if(snake.than[0].x > board1)
+		{
+			cout<< "Game Over";
+			return 0;
+		}
+		if(snake.than[0].x < 0)
+		{
+			cout<< "Game Over";
+			return 0;
+		}
+		if(snake.than[0].y > board2)
+		{
+			cout<< "Game Over";
+			return 0;
+		}
+		if(snake.than[0].y < 0)
+		{
+			cout<< "Game Over";
+			return 0;
+		}
+		Sleep(200);
+	}
 		
-		}
+}
+	
