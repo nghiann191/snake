@@ -1,43 +1,19 @@
-#define    KEY_A    0x41
-#define    KEY_B    0x42
-#define    KEY_C    0x43
-#define    KEY_D    0x44
-#define    KEY_E    0x45
-#define    KEY_F    0x46
-#define    KEY_G    0x47
-#define    KEY_H    0x48
-#define    KEY_I    0x49
-#define    KEY_J    0x4A
-#define    KEY_K    0x4B
-#define    KEY_L    0x4C
-#define    KEY_M    0x4D
-#define    KEY_N    0x4E
-#define    KEY_O    0x4F
-#define    KEY_P    0x50
-#define    KEY_Q    0x51
-#define    KEY_R    0x52
-#define    KEY_S    0x53
-#define    KEY_T    0x54
-#define    KEY_U    0x55
-#define    KEY_V    0x56
-#define    KEY_W    0x57
-#define    KEY_X    0x58
-#define    KEY_Y    0x59
-#define    KEY_Z    0x5A
+#include<iostream>
+#include<conio.h>
+#include<windows.h>
+#include<stdlib.h>
+#include<time.h>
+
 #define     KEY_LEFT    VK_LEFT
 #define     KEY_RIGHT   VK_RIGHT
 #define     KEY_UP      VK_UP
 #define     KEY_DOWN    VK_DOWN
 #define     KEY_ESC     VK_ESCAPE
-#include<iostream>
-#include"console.h"
-#include<conio.h>
-#include<windows.h>
-#include<stdlib.h>
-#include<time.h>
-using namespace std;
-#define board1 80
+#define board1 50
 #define board2 25
+
+using namespace std;
+
 enum TRANGTHAI{UP,DOWN,RIGHT,LEFT,STOP};
 
 struct toa_do{
@@ -66,6 +42,11 @@ void gotoXY(int x, int y)
   SetConsoleCursorPosition(h,c);
 }
 
+bool checkKey(int key)
+{
+    return GetAsyncKeyState(key);
+}
+
 void begin(snake &snake,food &food)
 {
 	snake.n = 3;
@@ -84,7 +65,18 @@ void begin(snake &snake,food &food)
 void print_snake(snake snake,food food)
 {
 	system("cls");
-	
+	for(int i=0;i<board2 +1;i++)
+	{
+		gotoXY(board1,i);
+		cout <<(char)179;
+	}
+	gotoXY(0,board2);
+	for(int i=0;i<board1;i++)
+	{
+		cout<<"_";
+	}
+	gotoXY(board1 + 1,0);
+	cout << "Scores: " << snake.n*10 - 30 ;
 	gotoXY(food.food.x,food.food.y);
 	cout <<"$";
 	for(int i=0;i<snake.n;i++)
@@ -163,39 +155,50 @@ int main()
 		Xu_ly(snake,food);
 		if(checkKey(KEY_ESC))
 		{
+			gotoXY(board1 + 1,10);
 			cout<<"Game Over";
-			return 0;
+			while(_kbhit() != checkKey(KEY_ESC));
+			break;
 		}
 		for(int i=2; i<snake.n  ;i++)
 		{
 			if(snake.than[0].x == snake.than[i].x && snake.than[0].y == snake.than[i].y )
 			{
-				cout<< "Game Over";
-				return 0;
+				gotoXY(board1 + 1,10);
+				cout<<"Game Over";
+				while(_kbhit() != checkKey(KEY_ESC));
+				break;
 			}
 		}
 		if(snake.than[0].x > board1)
 		{
-			cout<< "Game Over";
-			return 0;
+			gotoXY(board1 + 1,10);
+			cout<<"Game Over";
+			while(_kbhit() != checkKey(KEY_ESC));
+			break;
 		}
 		if(snake.than[0].x < 0)
 		{
-			cout<< "Game Over";
-			return 0;
+			gotoXY(board1 + 1,10);
+			cout<<"Game Over";
+			while(_kbhit() != checkKey(KEY_ESC));
+			break;
 		}
 		if(snake.than[0].y > board2)
 		{
-			cout<< "Game Over";
-			return 0;
+			gotoXY(board1 + 1,10);
+			cout<<"Game Over";
+			while(_kbhit() != checkKey(KEY_ESC));
+			break;
 		}
 		if(snake.than[0].y < 0)
 		{
-			cout<< "Game Over";
-			return 0;
+			gotoXY(board1 + 1,10);
+			cout<<"Game Over";
+			while(_kbhit() != checkKey(KEY_ESC));
+			break;
 		}
-		Sleep(200);
+		Sleep(100);
 	}
 		
 }
-	
