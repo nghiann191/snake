@@ -1,20 +1,18 @@
-#include<iostream>
-#include<conio.h>
-#include<windows.h>
-#include<stdlib.h>
-#include<time.h>
-
 #define     KEY_LEFT    VK_LEFT
 #define     KEY_RIGHT   VK_RIGHT
 #define     KEY_UP      VK_UP
 #define     KEY_DOWN    VK_DOWN
-#define     KEY_ESC     VK_ESCAPE
+
+#include<iostream>
+#include"console.h"
+#include<conio.h>
+#include<windows.h>
+#include<stdlib.h>
+#include<time.h>
+using namespace std;
 #define board1 50
 #define board2 25
-
-using namespace std;
-
-enum TRANGTHAI{UP,DOWN,RIGHT,LEFT,STOP};
+enum TRANGTHAI{UP,DOWN,RIGHT,LEFT};
 
 struct toa_do{
 	int x,y;
@@ -42,11 +40,6 @@ void gotoXY(int x, int y)
   SetConsoleCursorPosition(h,c);
 }
 
-bool checkKey(int key)
-{
-    return GetAsyncKeyState(key);
-}
-
 void begin(snake &snake,food &food)
 {
 	snake.n = 3;
@@ -64,25 +57,31 @@ void begin(snake &snake,food &food)
 
 void print_snake(snake snake,food food)
 {
-	system("cls");
-	for(int i=0;i<board2 +1;i++)
+//	system("cls");
+	for(int i=0 ; i<board2+1;i++)
 	{
 		gotoXY(board1,i);
-		cout <<(char)179;
+		cout << char(179);
 	}
 	gotoXY(0,board2);
 	for(int i=0;i<board1;i++)
 	{
-		cout<<"_";
+		cout << "_";
 	}
 	gotoXY(board1 + 1,0);
-	cout << "Scores: " << snake.n*10 - 30 ;
+	cout << "Scores: " << snake.n *10 - 30 ;
 	gotoXY(food.food.x,food.food.y);
 	cout <<"$";
 	for(int i=0;i<snake.n;i++)
 	{
 		gotoXY(snake.than[i].x,snake.than[i].y);
-		cout<< "+";
+		cout<< "o";
+	}
+	for(int i=snake.n ;i>0;i--)
+	{
+		gotoXY(snake.than[i].x , snake.than[i].y );
+		cout << " ";
+		break;
 	}
 }
 
@@ -135,10 +134,38 @@ void Xu_ly(snake &snake,food &food)
 		for(int i=snake.n;i>0;i--)
 		{
 			snake.than[i] = snake.than[i-1];
-			food.food.x = rand() % board1;
-			food.food.y = rand() % board2;
+		}
+		food.food.x = rand() % (board1-1);
+		food.food.y = rand() % (board2-1);
+	}
+}
+
+int GameOver(snake &snake)
+{
+	for(int i=4; i<snake.n  ;i++)
+	{
+		if(snake.than[0].x == snake.than[i].x && snake.than[0].y == snake.than[i].y )
+		{
+			return -1;
 		}
 	}
+	if(snake.than[0].x >= board1)
+	{
+		return -1;
+	}
+	if(snake.than[0].x < 0)
+	{
+		return -1;
+	}
+	if(snake.than[0].y >= board2)
+	{
+		return -1;
+	}
+	if(snake.than[0].y < 0)
+	{
+		return -1;
+	}
+	
 }
 
 int main()
@@ -146,6 +173,7 @@ int main()
 	srand(time(NULL));
 	snake snake;
 	food food;
+	int num = 0;
 	begin(snake,food);
 	
 	while(1)
@@ -153,52 +181,17 @@ int main()
 		print_snake(snake,food);
 		control_moveSnake(snake);
 		Xu_ly(snake,food);
-		if(checkKey(KEY_ESC))
+		num = GameOver(snake);
+		if(num == -1)
 		{
-			gotoXY(board1 + 1,10);
-			cout<<"Game Over";
-			while(_kbhit() != checkKey(KEY_ESC));
-			break;
-		}
-		for(int i=2; i<snake.n  ;i++)
-		{
-			if(snake.than[0].x == snake.than[i].x && snake.than[0].y == snake.than[i].y )
-			{
-				gotoXY(board1 + 1,10);
-				cout<<"Game Over";
-				while(_kbhit() != checkKey(KEY_ESC));
-				break;
-			}
-		}
-		if(snake.than[0].x > board1)
-		{
-			gotoXY(board1 + 1,10);
-			cout<<"Game Over";
-			while(_kbhit() != checkKey(KEY_ESC));
-			break;
-		}
-		if(snake.than[0].x < 0)
-		{
-			gotoXY(board1 + 1,10);
-			cout<<"Game Over";
-			while(_kbhit() != checkKey(KEY_ESC));
-			break;
-		}
-		if(snake.than[0].y > board2)
-		{
-			gotoXY(board1 + 1,10);
-			cout<<"Game Over";
-			while(_kbhit() != checkKey(KEY_ESC));
-			break;
-		}
-		if(snake.than[0].y < 0)
-		{
-			gotoXY(board1 + 1,10);
-			cout<<"Game Over";
-			while(_kbhit() != checkKey(KEY_ESC));
+			gotoXY(board1+1,10);
+			cout << "Game Over";
+			while(_getch() != 13);
 			break;
 		}
 		Sleep(100);
 	}
-		
+	
+	return 0;
 }
+	
