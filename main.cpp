@@ -1,8 +1,3 @@
-#define     KEY_LEFT    VK_LEFT
-#define     KEY_RIGHT   VK_RIGHT
-#define     KEY_UP      VK_UP
-#define     KEY_DOWN    VK_DOWN
-
 #include<iostream>
 #include"console.h"
 #include<conio.h>
@@ -16,7 +11,6 @@ enum TRANGTHAI{UP,DOWN,RIGHT,LEFT};
 
 struct toa_do{
 	int x,y;
-		
 };
 
 struct snake{
@@ -25,20 +19,9 @@ struct snake{
 	TRANGTHAI tt;
 };
 
-struct food
-{
+struct food{
 	toa_do food;
 };
-
-
-void gotoXY(int x, int y)
-{
-  static HANDLE h = NULL;  
-  if(!h)
-    h = GetStdHandle(STD_OUTPUT_HANDLE);
-  COORD c = { x, y };  
-  SetConsoleCursorPosition(h,c);
-}
 
 void begin(snake &snake,food &food)
 {
@@ -57,7 +40,6 @@ void begin(snake &snake,food &food)
 
 void print_snake(snake snake,food food)
 {
-//	system("cls");
 	for(int i=0 ; i<board2+1;i++)
 	{
 		gotoXY(board1,i);
@@ -126,7 +108,7 @@ void control_moveSnake(snake &snake)
 	}		
 }
 
-void Xu_ly(snake &snake,food &food)
+void Processed_Main(snake &snake,food &food)
 {
 	if(snake.than[0].x == food.food.x && snake.than[0].y == food.food.y)
 	{
@@ -180,7 +162,7 @@ int main()
 	{
 		print_snake(snake,food);
 		control_moveSnake(snake);
-		Xu_ly(snake,food);
+		Processed_Main(snake,food);
 		num = GameOver(snake);
 		if(num == -1)
 		{
