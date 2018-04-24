@@ -117,8 +117,8 @@ void Processed_Main(snake &snake,food &food)
 		{
 			snake.than[i] = snake.than[i-1];
 		}
-		food.food.x = rand() % (board1-1);
-		food.food.y = rand() % (board2-1);
+		food.food.x = 1+rand() % (board1-1);
+		food.food.y = 1+rand() % (board2-1);
 	}
 }
 
