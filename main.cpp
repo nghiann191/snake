@@ -24,8 +24,9 @@ struct food
 {
 	toa_do food;							// toa do cua thuc an
 };
+toa_do barrier[7];
 
-void begin(snake &snake,food &food)			// khoi tao toa do con ran ban dau voi 3 dot va toa do thuc an ban dau
+void begin(snake &snake,food &food)			// khoi tao toa do con ran ban dau voi 3 dot, thuc an ban dau va 6 vat can ngau nhien
 {
 	snake.n = 3;
 	snake.than[2].x=2;
@@ -38,6 +39,12 @@ void begin(snake &snake,food &food)			// khoi tao toa do con ran ban dau voi 3 d
 	
 	food.food.x = 5;
 	food.food.y=5;
+	
+	for(int i=0;i<7;i++)
+	{
+		barrier[i].x = 1+rand() % (board1-1);
+		barrier[i].y = 1+rand() % (board2-1);
+	}
 }
 
 void print_snake(snake snake,food food)		// hien thi con ran, thuc an, diem va khung tro choi
@@ -56,7 +63,12 @@ void print_snake(snake snake,food food)		// hien thi con ran, thuc an, diem va k
 	gotoXY(board1 + 1,0);								// diem tro choi
 	cout << "Scores: " << snake.n *10 - 30 ;
 	gotoXY(food.food.x,food.food.y);					// hien thi thuc an
-	cout <<"$";
+	cout << char(3);
+	for(int i=0;i<7;i++)								// hien thi vat can
+	{
+		gotoXY(barrier[i].x , barrier[i].y );
+		cout << char(219);
+	}
 	for(int i=0;i<snake.n;i++)							// hien thi con ran
 	{
 		gotoXY(snake.than[i].x,snake.than[i].y);
@@ -150,7 +162,13 @@ int GameOver(snake &snake)							// thua game, tra ve -1 neu thua game
 	{
 		return -1;
 	}
-	
+	for(int i=0;i<7;i++)							// dam vao vat can
+	{
+		if(snake.than[0].x == barrier[i].x && snake.than[0].y == barrier[i].y )
+		{
+			return -1;
+		}
+	}
 }
 
 int main()
