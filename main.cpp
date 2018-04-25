@@ -9,24 +9,22 @@ using namespace std;
 #define board2 25
 enum TRANGTHAI{UP,DOWN,RIGHT,LEFT};			// liet ke cac trang thai cua ran
 
-struct toa_do{								// toa do cua mot o trong man hinh console
+struct toa_do{								// khai bao toa do cua mot o trong man hinh console
 	int x,y;
 		
 };
 
 struct snake{
-	int n;									// do dai than
+	int n;									// khai bao do dai than
 	toa_do than[200];						// so dot trong than ran
 	TRANGTHAI tt;
 };
 
-struct food
-{
-	toa_do food;							// toa do cua thuc an
-};
-toa_do barrier[7];
+toa_do food;							// khai bao toa do cua thuc an
+toa_do money;
+toa_do barrier[7];						// khai báo toa do vat can
 
-void begin(snake &snake,food &food)			// khoi tao toa do con ran ban dau voi 3 dot, thuc an ban dau va 6 vat can ngau nhien
+void begin(snake &snake)			// khoi tao toa do con ran ban dau voi 3 dot, thuc an ban dau va 6 vat can ngau nhien
 {
 	snake.n = 3;
 	snake.than[2].x=2;
@@ -37,20 +35,21 @@ void begin(snake &snake,food &food)			// khoi tao toa do con ran ban dau voi 3 d
 	snake.than[0].y=2;
 	snake.tt=RIGHT;
 	
-	food.food.x = 5;
-	food.food.y=5;
-	
-	for(int i=0;i<7;i++)
+	food.x = 5;
+	food.y=5;
+	money.x = 12;
+	money.y = 19;
+	for(int i=0;i<7;i++)						// vat can xuat hien ngau nhien
 	{
 		barrier[i].x = 1+rand() % (board1-1);
 		barrier[i].y = 1+rand() % (board2-1);
 	}
 }
 
-void print_snake(snake snake,food food)		// hien thi con ran, thuc an, diem va khung tro choi
+void print_snake(snake snake)		// hien thi con ran, thuc an, diem va khung tro choi
 {
 //	system("cls");
-	for(int i=0 ; i<board2+1;i++)			// duong ke doc cua khung
+	for(int i=0 ; i<board2;i++)			// duong ke doc cua khung
 	{
 		gotoXY(board1,i);
 		cout << char(179);
@@ -58,12 +57,20 @@ void print_snake(snake snake,food food)		// hien thi con ran, thuc an, diem va k
 	gotoXY(0,board2);						// duong ke ngang cua khung
 	for(int i=0;i<board1;i++)
 	{
-		cout << "_";
+		cout << char(196);
 	}
+	gotoXY(board1,board2);
+	cout << char(217);
+	
 	gotoXY(board1 + 1,0);								// diem tro choi
 	cout << "Scores: " << snake.n *10 - 30 ;
-	gotoXY(food.food.x,food.food.y);					// hien thi thuc an
+	
+	gotoXY(food.x,food.y);					// hien thi thuc an
 	cout << char(3);
+	
+	gotoXY(money.x , money.y );
+	cout << "$";
+	
 	for(int i=0;i<7;i++)								// hien thi vat can
 	{
 		gotoXY(barrier[i].x , barrier[i].y );
@@ -123,17 +130,27 @@ void control_moveSnake(snake &snake)					// dieu khien su di chuyen cua con ran
 	}		
 }
 
-void Processed_Main(snake &snake,food &food)			//xu ly chinh
+void Processed_Main(snake &snake)			//xu ly chinh
 {
-	if(snake.than[0].x == food.food.x && snake.than[0].y == food.food.y)		// ran an thuc an
+	if(snake.than[0].x == food.x && snake.than[0].y == food.y)		// ran an thuc an
 	{
 		snake.n++;																// tang do dai
 		for(int i=snake.n;i>0;i--)												// dot moi la dau ran
 		{
 			snake.than[i] = snake.than[i-1];
 		}
-		food.food.x = 1+rand() % (board1-1);						// thuc an moi xuat hien ngau nhien
-		food.food.y = 1+rand() % (board2-1);
+		food.x = 1+rand() % (board1-1);						// thuc an moi xuat hien ngau nhien
+		food.y = 1+rand() % (board2-1);
+	}
+	if(snake.than[0].x == money.x && snake.than[0].y == money.y)		// ran an thuc an
+	{
+		snake.n++;																// tang do dai
+		for(int i=snake.n;i>0;i--)												// dot moi la dau ran
+		{
+			snake.than[i] = snake.than[i-1];
+		}
+		money.x = 1+rand() % (board1-1);						// thuc an moi xuat hien ngau nhien
+		money.y = 1+rand() % (board2-1);
 	}
 }
 
@@ -175,15 +192,14 @@ int main()
 {
 	srand(time(NULL));				// khoi tao bo sinh so ngau nhien
 	snake snake;
-	food food;
 	int num = 0;					// num = 0 game chay bt, num = -1 game over
-	begin(snake,food);
+	begin(snake);
 	
 	while(1)						// vong lap chinh
 	{
-		print_snake(snake,food);
+		print_snake(snake);
 		control_moveSnake(snake);
-		Processed_Main(snake,food);
+		Processed_Main(snake);
 		num = GameOver(snake);
 		if(num == -1)
 		{
