@@ -1,5 +1,5 @@
 #include<iostream>
-#include"Untitled2.h"
+#include"console.h"
 #include<conio.h>
 #include<windows.h>
 #include<stdlib.h>
