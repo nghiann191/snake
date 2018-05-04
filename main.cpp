@@ -1,12 +1,14 @@
 #include<iostream>
-#include"console.h"
+#include"Untitled2.h"
 #include<conio.h>
 #include<windows.h>
 #include<stdlib.h>
 #include<time.h>
+#include <dos.h>
+#include <dir.h>
 using namespace std;
 #define board1 50
-#define board2 25
+#define board2 23
 enum TRANGTHAI{UP,DOWN,RIGHT,LEFT};			// liet ke cac trang thai cua ran
 
 struct toa_do{								// khai bao toa do cua mot o trong man hinh console
@@ -66,6 +68,7 @@ void print_snake(snake snake)		// hien thi con ran, thuc an, diem va khung tro c
 	cout << "Scores: " << snake.n *10 - 30 ;
 	
 	gotoXY(food.x,food.y);					// hien thi thuc an
+	SetColor(4);
 	cout << char(3);
 	
 	gotoXY(money.x , money.y );
@@ -73,11 +76,13 @@ void print_snake(snake snake)		// hien thi con ran, thuc an, diem va khung tro c
 	
 	for(int i=0;i<7;i++)								// hien thi vat can
 	{
+		SetColor(14);
 		gotoXY(barrier[i].x , barrier[i].y );
 		cout << char(219);
 	}
 	for(int i=0;i<snake.n;i++)							// hien thi con ran
 	{
+		SetColor(15);
 		gotoXY(snake.than[i].x,snake.than[i].y);
 		cout<< "o";
 	}
@@ -163,21 +168,21 @@ int GameOver(snake &snake)							// thua game, tra ve -1 neu thua game
 			return -1;
 		}
 	}
-	if(snake.than[0].x >= board1)					// ran dam tuong
+	if(snake.than[0].x >= board1)					// ran di qua tuong va xuat hien o vi tri tuong doi dien
 	{
-		return -1;
+		snake.than[0].x = 0;
 	}
-	if(snake.than[0].x < 0)							// ran dam tuong
+	if(snake.than[0].x < 0)							// ran di qua tuong va xuat hien o vi tri tuong doi dien
 	{
-		return -1;
+		snake.than[0].x = board1;
 	}
-	if(snake.than[0].y >= board2)					// ran dam tuong
+	if(snake.than[0].y >= board2)					// rran di qua tuong va xuat hien o vi tri tuong doi dien
 	{
-		return -1;
+		snake.than[0].y = 0;
 	}
-	if(snake.than[0].y < 0)							// ran dam tuong
+	if(snake.than[0].y < 0)							// ran di qua tuong va xuat hien o vi tri tuong doi dien
 	{
-		return -1;
+		snake.than[0].y = board2;
 	}
 	for(int i=0;i<7;i++)							// dam vao vat can
 	{
@@ -213,4 +218,3 @@ int main()
 	
 	return 0;
 }
-	
